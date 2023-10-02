@@ -1,5 +1,6 @@
 package com.shopify;
 
+import com.shopify.model.ShopifyTheme;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

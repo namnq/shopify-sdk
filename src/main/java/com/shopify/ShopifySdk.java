@@ -1,5 +1,6 @@
 package com.shopify;
 
+import com.shopify.mappers.ObjectMapperProvider;
 import com.shopify.model.ShopifyAssertsRoot;
 import com.shopify.model.ShopifyAsset;
 import com.shopify.model.ShopifyAssetRoot;
@@ -533,37 +534,10 @@ public class ShopifySdk {
 		}
 		return shopifyAssets;
 	}
-	public ShopifyPage<ShopifyAsset> getAssets(final String pageInfo, final int pageSize, String themeId) {
-		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
-				.queryParam(PAGE_INFO_QUERY_PARAMETER, pageInfo));
-		final ShopifyAssertsRoot shopifyAsseRoot = response.readEntity(ShopifyAssertsRoot.class);
-		return mapPagedResponse(shopifyAsseRoot.getAssets(), response);
-	}
-	public ShopifyPage<ShopifyAsset> getAssets(final int pageSize, String themeId) {
-		return this.getAssets(null, pageSize, themeId);
-	}
 	public ShopifyWebhookRoot createWebhook(ShopifyWebhookRoot request) {
 		final Response response =  post(getWebTarget().path(WEBHOOKS), request);
 		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
 		return result;
-	}
-	public ShopifyWebhookRoot getWebooks() {
-		final Response response =  get(getWebTarget().path(WEBHOOKS).path());
-		final ShopifyWebhookRoot result = response.readEntity(ShopifyWebhookRoot.class);
-		return result;
-	}
-	public List<ShopifyWebhook> getWebhooks() {
-		final List<ShopifyWebhook> shopifyWebhooks = new LinkedList<>();
-		ShopifyPage<ShopifyWebhook> shopifyWebhooksPage = getWebhooks(MAX_REQUEST_LIMIT);
-		LOGGER.info("Retrieved {} Webhooks from first page", shopifyWebhooksPage.size());
-		shopifyWebhooks.addAll(shopifyWebhooksPage);
-		while (shopifyWebhooksPage.getNextPageInfo() != null) {
-			shopifyWebhooksPage = getWebhooks(shopifyWebhooksPage.getNextPageInfo(), MAX_REQUEST_LIMIT);
-			LOGGER.info("Retrieved {} Webhooks from page {}", shopifyWebhooksPage.size(),
-					shopifyWebhooksPage.getNextPageInfo());
-			shopifyWebhooks.addAll(shopifyWebhooksPage);
-		}
-		return shopifyWebhooks;
 	}
 	public ShopifyPage<ShopifyAsset> getAssets(final String pageInfo, final int pageSize, String themeId) {
 		final Response response = get(getWebTarget().path(THEMES).path(themeId).path(ASSETS).queryParam(LIMIT_QUERY_PARAMETER, pageSize)
@@ -1233,11 +1207,12 @@ public class ShopifySdk {
 	}
 
 	private static Client buildClient() {
-		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
-		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
-		provider.setMapper(mapper);
-
-		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
+//		final ObjectMapper mapper = ShopifySdkObjectMapper.buildMapper();
+//		final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
+//		provider.setMapper(mapper);
+//
+//		return ClientBuilder.newClient().register(JacksonFeature.class).register(provider);
+		return ClientBuilder.newClient().register(JacksonFeature.class).register(ObjectMapperProvider.class);
 	}
 
 	public class ShopifySdkRetryListener implements RetryListener {
