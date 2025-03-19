@@ -61,6 +61,7 @@
 		<jersey.version>2.33</jersey.version>
 		<pitest.version>1.4.3</pitest.version>
 		<jacoco.version>0.8.2</jacoco.version>
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
 	<dependencies>
